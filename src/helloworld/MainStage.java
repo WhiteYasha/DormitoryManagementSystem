@@ -25,6 +25,7 @@ public class MainStage {
 	public Label getTitle() {				//获取标题布局
 		Label title = new Label("寝室列表");
 		title.setFont(Font.font("Kai", 30));
+		title.setAlignment(Pos.CENTER);
 		
 		return title;
 	}
@@ -192,7 +193,7 @@ public class MainStage {
 	}
 	public Stage getStage() {				//获取主界面
 		Stage stage = new Stage();
-
+		
 		mainPage.setLeft(new MenuPane(mainPage, stage).getMenu());
 		mainPage.setCenter(getMainPane());
 		BorderPane.setAlignment(mainPage.getCenter(), Pos.CENTER);

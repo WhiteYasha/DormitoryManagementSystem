@@ -11,15 +11,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.*;
 
 public class SearchPane {
-	private BorderPane mainPage;
 	private JFXTextField filters[] = new JFXTextField[5];
 	private TableView table;
 	private	ObservableList<Student> tableModel;
 	private int chosenIndex = -1;
-	
-	public SearchPane(BorderPane mp) {				//构造函数
-		mainPage = mp;
-	}
 	
 	public GridPane getFilters() {				//获取输入及控制布局
 		Label lbs[] = new Label[5];
@@ -89,7 +84,7 @@ public class SearchPane {
 			//连接数据库
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "woshinst1");
-			Statement sta = con.createStatement();
+			Statement sta = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = sta.executeQuery("SELECT * FROM studentinfo");
 			while (rs.next()) {
 				Student tempStu = new Student(rs.getString("stuId"), rs.getString("stuName"), rs.getString("colleget"), 

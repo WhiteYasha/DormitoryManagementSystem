@@ -91,8 +91,7 @@ public class LoginStage {
 	}
 	public Stage getStage() {				//获取主界面
 		currentStage.setTitle("寝室管理系统");
-		Scene scene = new Scene(getMainPane(), 400, 300);
-		currentStage.setScene(scene);
+		currentStage.setScene(new Scene(getMainPane(), 400, 300));
 		
 		return currentStage;
 	}
