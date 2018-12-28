@@ -1,4 +1,4 @@
-package helloworld;
+package DormitoryManagement;
 
 import java.sql.*;
 import javafx.stage.*;
@@ -37,7 +37,7 @@ public class MainStage {
 		try {
 			//连接数据库
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "woshinst1");
+			Connection con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "123456");
 			Statement sta = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);;
 			//添加寝室按钮控件
 			for (int i = 1; i <= 3; i++)
@@ -61,51 +61,46 @@ public class MainStage {
 						try {
 							//连接数据库
 							Class.forName("com.mysql.jdbc.Driver");
-							Connection con_temp = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "woshinst1");
+							Connection con_temp = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "123456");
 							Statement sta_temp = con_temp.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 							ResultSet rs_current = sta_temp.executeQuery("SELECT * FROM roominfo WHERE roomid=" + bt.getText());
 							while (rs_current.next()) {
 								for (int i2 = 1; i2 <= 4; i2++)
 									if (rs_current.getString("bed" + i2).equals("无")) emptyBedsCurrent++;
 							}
-							//关闭数据库
-							rs_current.close(); sta_temp.close(); con_temp.close();
-						} catch (SQLException | ClassNotFoundException e1) {
-							e1.printStackTrace();
-						}
-						boolean fullCurrent = (emptyBedsCurrent == 0 ? true : false);
-						//之前有选中过寝室
-						if (isChosen) {
-							//统计之前选中寝室的空余床位数量
-							int emptyBedsChosen = 0;
-							try {
-								//连接数据库
-								Class.forName("com.mysql.jdbc.Driver");
-								Connection con_chosen = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/dormitory?useSSL=false", "root", "woshinst1");
-								Statement sta_chosen = con_chosen.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-								ResultSet rs_chosen = sta_chosen.executeQuery("SELECT * FROM roominfo WHERE roomid=" + chosenDormitoryButton.getText());
+							boolean fullCurrent = (emptyBedsCurrent == 0 ? true : false);
+							//之前有选中过寝室
+							if (isChosen) {
+								//统计之前选中寝室的空余床位数量
+								int emptyBedsChosen = 0;
+								ResultSet rs_chosen = sta.executeQuery("SELECT * FROM roominfo WHERE roomid=" + chosenDormitoryButton.getText());
 								while (rs_chosen.next()) {
 									for (int i2 = 1; i2 <= 4; i2++)
 										if (rs_chosen.getString("bed" + i2).equals("无")) emptyBedsChosen++;
 								}
-								//关闭数据库
-								rs_chosen.close(); sta_chosen.close(); con_chosen.close();
-							} catch (SQLException | ClassNotFoundException e1) {
-								e1.printStackTrace();
+								boolean fullChosen = (emptyBedsChosen == 0 ? true : false);
+								//之前选中的寝室与当前寝室一样（取消选择）
+								if (chosenDormitoryButton.getText().equals(bt.getText())) {
+									isChosen = false;
+									inputDormitory.setText("");
+									if (!fullChosen) chosenDormitoryButton.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#c3b6c7; -fx-border-width:3");
+									else chosenDormitoryButton.setStyle("-fx-background-color:#a14f64;-fx-border-color:#a14f64;-fx-border-width:3");
+								}
+								//之前选中的寝室与当前寝室不一样
+								else {
+									//根据之前选中的寝室床位剩余数量判断颜色
+									if (!fullChosen) chosenDormitoryButton.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#c3b6c7; -fx-border-width:3");
+									else chosenDormitoryButton.setStyle("-fx-background-color:#a14f64;-fx-border-color:#a14f64;-fx-border-width:3");
+									//根据当前寝室床位剩余数量判断颜色
+									if (!fullCurrent) bt.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#bc96a4; -fx-border-width:3");
+									else bt.setStyle("-fx-background-color:#a14f64;-fx-border-color:#bc96a4;-fx-border-width:3");
+									isChosen = true;
+									chosenDormitoryButton = bt;
+									inputDormitory.setText(chosenDormitoryButton.getText());
+								}
 							}
-							boolean fullChosen = (emptyBedsChosen == 0 ? true : false);
-							//之前选中的寝室与当前寝室一样（取消选择）
-							if (chosenDormitoryButton.getText().equals(bt.getText())) {
-								isChosen = false;
-								inputDormitory.setText("");
-								if (!fullChosen) chosenDormitoryButton.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#c3b6c7; -fx-border-width:3");
-								else chosenDormitoryButton.setStyle("-fx-background-color:#a14f64;-fx-border-color:#a14f64;-fx-border-width:3");
-							}
-							//之前选中的寝室与当前寝室不一样
+							//之前未选中过别的寝室
 							else {
-								//根据之前选中的寝室床位剩余数量判断颜色
-								if (!fullChosen) chosenDormitoryButton.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#c3b6c7; -fx-border-width:3");
-								else chosenDormitoryButton.setStyle("-fx-background-color:#a14f64;-fx-border-color:#a14f64;-fx-border-width:3");
 								//根据当前寝室床位剩余数量判断颜色
 								if (!fullCurrent) bt.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#bc96a4; -fx-border-width:3");
 								else bt.setStyle("-fx-background-color:#a14f64;-fx-border-color:#bc96a4;-fx-border-width:3");
@@ -113,15 +108,10 @@ public class MainStage {
 								chosenDormitoryButton = bt;
 								inputDormitory.setText(chosenDormitoryButton.getText());
 							}
-						}
-						//之前未选中过别的寝室
-						else {
-							//根据当前寝室床位剩余数量判断颜色
-							if (!fullCurrent) bt.setStyle("-fx-background-color:#c3b6c7;-fx-border-color:#bc96a4; -fx-border-width:3");
-							else bt.setStyle("-fx-background-color:#a14f64;-fx-border-color:#bc96a4;-fx-border-width:3");
-							isChosen = true;
-							chosenDormitoryButton = bt;
-							inputDormitory.setText(chosenDormitoryButton.getText());
+							//关闭数据库
+							rs_current.close(); sta_temp.close(); con_temp.close();
+						} catch (SQLException | ClassNotFoundException e1) {
+							e1.printStackTrace();
 						}
 					});
 					dormitories.add(bt, j - 1, i - 1);
